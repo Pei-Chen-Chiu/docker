@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      # Add more steps for building and pushing Docker images if necessary
+      
+      - name: Deploy Docker Compose
+        run: docker-compose up -d

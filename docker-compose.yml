@@ -1,0 +1,15 @@
+version: "3"
+services:
+  web:
+    build: .
+    command: python app.py
+    ports:
+      - "8080:5000"
+    restart: always
+    volumes:
+      - .:/code
+    depends_on:
+      - redis
+  redis:
+    image: redis
+    restart: always
