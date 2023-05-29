@@ -2,14 +2,29 @@ on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
       
-      # Add more steps for building and pushing Docker images if necessary
+    # Add more steps for building and pushing Docker images if necessary
       
-      - name: Deploy Docker Compose
-        run: docker-compose up -d
+    - name: Deploy Docker Compose
+      run: docker-compose up -d
+
+    - name: Get Container Name
+      id: container_info
+      run: |
+        container_name=$(docker-compose ps -q web)
+        echo "Container Name: $container_name"
+        echo "::set-output name=container_name::$container_name"
+
+    - name: Access Flask App
+      run: |
+        container_name=${{ steps.container_info.outputs.container_name }}
+        app_port=$(docker inspect --format='{{(index (index .NetworkSettings.Ports "5000/tcp") 0).HostPort}}' $container_name)
+        echo "Flask App URL: http://localhost:$app_port/"
